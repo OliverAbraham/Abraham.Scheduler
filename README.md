@@ -1,46 +1,34 @@
-# Abraham.ProgramSettingsManager
+# Abraham.Scheduler
 
 ## OVERVIEW
 
-Enables you to use a JSON file for configuration of your app
-(typically appsettings.hjson or appsettings.json).
+Execute periodic actions in your app very easily.
+Possible with only one line of code.
+You can easily set up a scheduler that calls your method every seconds, minute, hour, day or special fractions.
+You can also schedule a call at the beginning of every minute, hour or day.
+For examples, please refer to the demo project on github.
+
 
 
 
 ## INSTALLATION
 
-Install the Nuget package "Abraham.ProgramSettingsManager" into you application (from https://www.nuget.org).
+Install the Nuget package "Abraham.Scheduler" into your application (from https://www.nuget.org).
 
 Add the following code:
 
-    private static ProgramSettingsManager<Configuration> _myConfiguration;
+    private static Scheduler _myScheduler;
 
     static void Main(string[] args)
     {
-        // easy version:
-        _myConfiguration = new ProgramSettingsManager<Configuration>().Load();
-        Console.WriteLine($"A value from my appsettings.hjson file: {_myConfiguration.Data.Option1}");
-
-    . . . your code
+        _myScheduler = new Scheduler()
+            .UseAction( () => Console.WriteLine($"Action!") )
+            .Start();
     }
 
-    class Configuration
-    {
-	    public string Option1 { get; set; }
-	    public string Option2 { get; set; }
-	    public string Option3 { get; set; }
-    }
-
-Add a file named "appsettings.hjson" to your project, make sure it's 
-copied to the output directory (bin directory) of your app, with this content:
-
-    {
-	    Option1: "my value 1",
-	    Option2: "my value 2",
-	    Option3: "my value 3",
-    }
 
 That's it!
+This one-liner will call your action every second.
 
 For more options, please refer to my Demo application in the github repository (see below).
 The Demo and the nuget source code is well documented.
@@ -58,8 +46,8 @@ Please feel free to comment and suggest improvements!
 
 The source code is hosted at:
 
-https://github.com/OliverAbraham/ProgramSettingsManager
+https://github.com/OliverAbraham/Abraham.Scheduler
 
 The Nuget Package is hosted at: 
 
-https://www.nuget.org/packages/Abraham.ProgramSettingsManager
+https://www.nuget.org/packages/Abraham.Scheduler
