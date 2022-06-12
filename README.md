@@ -9,6 +9,16 @@ You can also schedule a call at the beginning of every minute, hour or day.
 For examples, please refer to the demo project on github.
 
 
+## License
+
+Licensed under Apache licence.
+https://www.apache.org/licenses/LICENSE-2.0
+
+
+## Compatibility
+
+The nuget package was build with DotNET 6.
+
 
 
 ## INSTALLATION
