@@ -133,7 +133,7 @@ public class Scheduler
     /// </summary>
     public Scheduler UseFirstStartRightNow()
     {
-        _firstIntervalTimeSpan = new TimeSpan(0);
+        _firstIntervalTimeSpan = new TimeSpan(1);
         return this;
     }
 
@@ -244,23 +244,22 @@ public class Scheduler
     #region ------------- Implementation ------------------------------------------------------
     private void SchedulerProc()
     {
-        System.Diagnostics.Debug.WriteLine("SchedulerProc: SchedulerProc entered");
+        System.Diagnostics.Debug.WriteLine("Scheduler: SchedulerProc entered");
         try
         {
             IsRunning = true;
             while (_thread.Run && !CancellationTokenSource.IsCancellationRequested)
             {
-                _syncTaskActionHandler();
-                //_asyncTaskActionHandler().GetAwaiter().GetResult();
+                Wait();
                 if (CancellationTokenSource.IsCancellationRequested)
                 {
-                    System.Diagnostics.Debug.WriteLine($"SchedulerProc: Cancellation requested run={_thread.Run}");
+                    System.Diagnostics.Debug.WriteLine($"Scheduler: Cancellation requested run={_thread.Run}");
                     break;
                 }
-                Wait();
-                System.Diagnostics.Debug.WriteLine($"SchedulerProc: wait ended run={_thread.Run}");
+
+                _syncTaskActionHandler();
+                _asyncTaskActionHandler().GetAwaiter().GetResult();
             }
-            System.Diagnostics.Debug.WriteLine("SchedulerProc: scheduler loop exited");
         }
         catch (Exception ex)
         {
@@ -272,7 +271,7 @@ public class Scheduler
             IsRunning = false;
             _onSchedulerEnded();
         }
-        System.Diagnostics.Debug.WriteLine("SchedulerProc: SchedulerProc exited");
+        System.Diagnostics.Debug.WriteLine("Scheduler: SchedulerProc exited");
     }
 
     private void Wait()
