@@ -94,13 +94,14 @@ public class ThreadExtensions
     #region ------------- Methods -------------------------------------------------------------
     public void SendStopSignal()
     {
-        System.Diagnostics.Debug.WriteLine($"SendStopSignal and don't wait");
+        System.Diagnostics.Debug.WriteLine($"ThreadExtensions.SendStopSignal()");
         CancellationTokenSource.Cancel();
+        System.Diagnostics.Debug.WriteLine($"ThreadExtensions.SendStopSignal() IsCancellationRequested={CancellationTokenSource.IsCancellationRequested}");
     }
 
     public void SendStopSignalAndWait(int timeoutInSeconds = 10)
     {
-        System.Diagnostics.Debug.WriteLine($"SendStopSignalAndWait");
+        System.Diagnostics.Debug.WriteLine($"ThreadExtensions.SendStopSignalAndWait");
         CancellationTokenSource.Cancel();
 
         for (int i = 0; Thread.IsAlive && i < (10 * timeoutInSeconds); i++)

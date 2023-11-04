@@ -221,8 +221,10 @@ public class Scheduler
     /// </summary>
     public Scheduler Stop()
     {
-        CancellationTokenSource.Cancel();
+        System.Diagnostics.Debug.WriteLine($"Scheduler: stop begin");
         _thread.SendStopSignal();
+        CancellationTokenSource.Cancel();
+        System.Diagnostics.Debug.WriteLine($"Scheduler: stop end");
         return this;
     }
 
@@ -242,17 +244,23 @@ public class Scheduler
     #region ------------- Implementation ------------------------------------------------------
     private void SchedulerProc()
     {
+        System.Diagnostics.Debug.WriteLine("SchedulerProc: SchedulerProc entered");
         try
         {
             IsRunning = true;
             while (_thread.Run && !CancellationTokenSource.IsCancellationRequested)
             {
                 _syncTaskActionHandler();
-                _asyncTaskActionHandler().GetAwaiter().GetResult();
+                //_asyncTaskActionHandler().GetAwaiter().GetResult();
                 if (CancellationTokenSource.IsCancellationRequested)
+                {
+                    System.Diagnostics.Debug.WriteLine($"SchedulerProc: Cancellation requested run={_thread.Run}");
                     break;
+                }
                 Wait();
+                System.Diagnostics.Debug.WriteLine($"SchedulerProc: wait ended run={_thread.Run}");
             }
+            System.Diagnostics.Debug.WriteLine("SchedulerProc: scheduler loop exited");
         }
         catch (Exception ex)
         {
@@ -264,6 +272,7 @@ public class Scheduler
             IsRunning = false;
             _onSchedulerEnded();
         }
+        System.Diagnostics.Debug.WriteLine("SchedulerProc: SchedulerProc exited");
     }
 
     private void Wait()
