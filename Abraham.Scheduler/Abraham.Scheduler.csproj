@@ -16,7 +16,8 @@
 	  <IncludeSymbols>True</IncludeSymbols>
 	  <!-- Include symbol files (*.pdb) in the built .nupkg -->
 	  <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-	  <Version>1.0.4</Version>
+	  <Version>1.0.5</Version>
+	  <PackageReleaseNotes>Added a OneShot option</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

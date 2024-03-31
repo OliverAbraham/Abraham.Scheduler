@@ -1,4 +1,6 @@
-﻿namespace Abraham.Scheduler;
+﻿using System;
+
+namespace Abraham.Scheduler;
 
 /// <summary>
 /// Execute periodic actions in your app very easily.
@@ -65,6 +67,7 @@ public class Scheduler
     #region ------------- Fields --------------------------------------------------------------
     private ThreadExtensions         _thread;
     private TimeSpan                 _timeSpan;
+    private TimeSpan                 _oneShotTimeSpan;
     private TimeSpan                 _firstIntervalTimeSpan;
     private Action                   _syncTaskActionHandler;
     private AsyncTaskActionHandler   _asyncTaskActionHandler;
@@ -81,6 +84,7 @@ public class Scheduler
     public Scheduler()
     {
         _timeSpan = new TimeSpan(0, 0, 1);
+        _oneShotTimeSpan = default(TimeSpan);
         _firstIntervalTimeSpan = default(TimeSpan);
         OnAction = null;
         OnAsyncAction = null;
@@ -207,6 +211,24 @@ public class Scheduler
         return this;
     }
 
+
+    /// <summary>
+    /// Call this method to start the scheduler only once
+    /// </summary>
+    public Scheduler StartOneShot()
+    {
+        CancellationTokenSource = new CancellationTokenSource();
+        _thread = new ThreadExtensions(new ParameterizedThreadStart(
+            delegate (object data)
+            {
+                SchedulerProc();
+            }));
+
+        _oneShotTimeSpan = new TimeSpan(1);
+        _thread.Thread.Start();
+        return this;
+    }
+
     /// <summary>
     /// Call this method to do the next call right now
     /// </summary>
@@ -259,6 +281,12 @@ public class Scheduler
 
                 _syncTaskActionHandler();
                 _asyncTaskActionHandler().GetAwaiter().GetResult();
+
+                if (_oneShotTimeSpan != default(TimeSpan))
+                {
+                    _oneShotTimeSpan = default(TimeSpan);
+                    break;
+                }
             }
         }
         catch (Exception ex)
@@ -277,7 +305,11 @@ public class Scheduler
     private void Wait()
     {
         TimeSpan span;
-        if (_firstIntervalTimeSpan != default(TimeSpan))
+        if (_oneShotTimeSpan != default(TimeSpan))
+        {
+            span = _oneShotTimeSpan;
+        }
+        else if (_firstIntervalTimeSpan != default(TimeSpan))
         {
             span = _firstIntervalTimeSpan;
             _firstIntervalTimeSpan = default(TimeSpan);
